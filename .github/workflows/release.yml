@@ -58,7 +58,7 @@ jobs:
       - name: Create checksums
         run: |
           cd dist
-          sha256sum stresstest-*-linux-* stresstest-*-darwin-* stresstest-*-windows-* | sort -k2 > checksums.txt
+          sha256sum stresstest-*-linux-*.tar.gz stresstest-*-darwin-*.tar.gz stresstest-*-windows-*.exe.zip | sort -k2 > checksums.txt
           cat checksums.txt
 
       - name: Generate release notes
@@ -90,7 +90,7 @@ jobs:
             dist/stresstest-*-linux-386.tar.gz
             dist/stresstest-*-darwin-amd64.tar.gz
             dist/stresstest-*-darwin-arm64.tar.gz
-            dist/stresstest-*-windows-amd64.zip
-            dist/stresstest-*-windows-arm64.zip
-            dist/stresstest-*-windows-386.zip
+            dist/stresstest-*-windows-amd64.exe.zip
+            dist/stresstest-*-windows-arm64.exe.zip
+            dist/stresstest-*-windows-386.exe.zip
             dist/checksums.txt
