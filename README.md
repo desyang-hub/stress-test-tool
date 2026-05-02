@@ -1,4 +1,4 @@
-# stress-test-utils
+# Stress Test Tool
 
 High-performance API stress testing tool for Go.
 

@@ -54,7 +54,7 @@ func main() {
 				Action: validateAction,
 			},
 		},
-		Version: "0.1.0",
+		Version: "1.0.0",
 	}
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
