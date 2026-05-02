@@ -6,15 +6,15 @@ import "time"
 
 // TestConfig is the top-level configuration for a stress test.
 type TestConfig struct {
-	Name           string          `yaml:"name"`
-	Description    string          `yaml:"description"`
-	DefaultRequest DefaultRequest  `yaml:"default_request"`
-	Stages         []Stage         `yaml:"stages"`
-	Timeout        *Duration       `yaml:"timeout"`
-	TLS            TLSConfig       `yaml:"tls"`
-	CookieJar      bool            `yaml:"cookie_jar"`
-	Output         OutputConfig    `yaml:"output"`
-	Requests       []Request       `yaml:"requests"`
+	Name           string         `yaml:"name"`
+	Description    string         `yaml:"description"`
+	DefaultRequest DefaultRequest `yaml:"default_request"`
+	Stages         []Stage        `yaml:"stages"`
+	Timeout        *Duration      `yaml:"timeout"`
+	TLS            TLSConfig      `yaml:"tls"`
+	CookieJar      bool           `yaml:"cookie_jar"`
+	Output         OutputConfig   `yaml:"output"`
+	Requests       []Request      `yaml:"requests"`
 }
 
 // DefaultRequest provides default values for all requests in the test.

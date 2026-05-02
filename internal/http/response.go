@@ -7,26 +7,26 @@ import (
 
 // Response wraps an http.Response with timing and error information.
 type Response struct {
-	StatusCode    int             // HTTP status code
-	Status        string          // status text
-	BodySize      int64           // response body size in bytes
-	Headers       http.Header     // response headers
-	Latency       time.Duration   // total round-trip time
-	TLSHandshake  time.Duration   // TLS handshake duration (0 if not TLS)
-	DNSResolve    time.Duration   // DNS resolution duration (0 if cached)
-	Error         string          // error message, empty on success
-	ErrorCategory string          // error category for grouping
-	Body          []byte          // response body (consumed by client)
+	StatusCode    int           // HTTP status code
+	Status        string        // status text
+	BodySize      int64         // response body size in bytes
+	Headers       http.Header   // response headers
+	Latency       time.Duration // total round-trip time
+	TLSHandshake  time.Duration // TLS handshake duration (0 if not TLS)
+	DNSResolve    time.Duration // DNS resolution duration (0 if cached)
+	Error         string        // error message, empty on success
+	ErrorCategory string        // error category for grouping
+	Body          []byte        // response body (consumed by client)
 }
 
 // NewResponse creates a Response from an http.Response and timing info.
 func NewResponse(resp *http.Response, reqStart time.Time, timings *ResponseTimings) *Response {
 	r := &Response{
-		StatusCode: resp.StatusCode,
-		Status:     resp.Status,
-		BodySize:   0,
-		Headers:    resp.Header,
-		Latency:    time.Since(reqStart),
+		StatusCode:   resp.StatusCode,
+		Status:       resp.Status,
+		BodySize:     0,
+		Headers:      resp.Header,
+		Latency:      time.Since(reqStart),
 		TLSHandshake: timings.TLSHandshake,
 		DNSResolve:   timings.DNS,
 	}

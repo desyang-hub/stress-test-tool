@@ -32,23 +32,23 @@ func (r *HTMLReporter) Write(s Stats) error {
 	tmpl := template.Must(template.New("report").Parse(htmlTemplate))
 
 	data := reportData{
-		Title:          s.Name,
-		GeneratedAt:    time.Now().Format(time.RFC3339),
-		TotalRequests:  s.TotalRequests,
-		Successful:     s.Successful,
-		Failed:         s.Failed,
-		SuccessRate:    successRateFloat(s),
-		TPS:            s.TPS,
-		Duration:       s.TotalDuration.Round(time.Millisecond).String(),
-		LatencyMin:     s.LatencyMin,
-		LatencyMean:    s.LatencyMean,
-		LatencyMedian:  s.LatencyMedian,
-		LatencyP90:     s.LatencyP90,
-		LatencyP95:     s.LatencyP95,
-		LatencyP99:     s.LatencyP99,
-		LatencyMax:     s.LatencyMax,
-		StatusCodes:    statusRows(s.StatusCodeBreakdown, s.TotalRequests),
-		Histogram:      histogramRows(s.Histogram, s.TotalRequests),
+		Title:         s.Name,
+		GeneratedAt:   time.Now().Format(time.RFC3339),
+		TotalRequests: s.TotalRequests,
+		Successful:    s.Successful,
+		Failed:        s.Failed,
+		SuccessRate:   successRateFloat(s),
+		TPS:           s.TPS,
+		Duration:      s.TotalDuration.Round(time.Millisecond).String(),
+		LatencyMin:    s.LatencyMin,
+		LatencyMean:   s.LatencyMean,
+		LatencyMedian: s.LatencyMedian,
+		LatencyP90:    s.LatencyP90,
+		LatencyP95:    s.LatencyP95,
+		LatencyP99:    s.LatencyP99,
+		LatencyMax:    s.LatencyMax,
+		StatusCodes:   statusRows(s.StatusCodeBreakdown, s.TotalRequests),
+		Histogram:     histogramRows(s.Histogram, s.TotalRequests),
 	}
 
 	f, err := os.Create(filename)
@@ -61,23 +61,23 @@ func (r *HTMLReporter) Write(s Stats) error {
 }
 
 type reportData struct {
-	Title          string
-	GeneratedAt    string
-	TotalRequests  int64
-	Successful     int64
-	Failed         int64
-	SuccessRate    float64
-	TPS            float64
-	Duration       string
-	LatencyMin     float64
-	LatencyMean    float64
-	LatencyMedian  float64
-	LatencyP90     float64
-	LatencyP95     float64
-	LatencyP99     float64
-	LatencyMax     float64
-	StatusCodes    []statusRow
-	Histogram      []histRow
+	Title         string
+	GeneratedAt   string
+	TotalRequests int64
+	Successful    int64
+	Failed        int64
+	SuccessRate   float64
+	TPS           float64
+	Duration      string
+	LatencyMin    float64
+	LatencyMean   float64
+	LatencyMedian float64
+	LatencyP90    float64
+	LatencyP95    float64
+	LatencyP99    float64
+	LatencyMax    float64
+	StatusCodes   []statusRow
+	Histogram     []histRow
 }
 
 type statusRow struct {
@@ -87,7 +87,7 @@ type statusRow struct {
 }
 
 type histRow struct {
-	Key string
+	Key   string
 	Count int64
 	Pct   float64
 }

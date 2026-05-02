@@ -12,9 +12,9 @@ import (
 
 // Client wraps http.Client with stress-test specific features.
 type Client struct {
-	httpClient *http.Client
-	retries    int
-	retryDelay time.Duration
+	httpClient  *http.Client
+	retries     int
+	retryDelay  time.Duration
 	followRedir bool
 }
 

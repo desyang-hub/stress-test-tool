@@ -19,15 +19,15 @@ func BuildTransport(tlsCfg *TLSConfig) *http.Transport {
 	}
 
 	transport := &http.Transport{
-		Proxy:                 http.ProxyFromEnvironment,
-		DialContext:           dialer.DialContext,
-		MaxIdleConns:          100,
-		MaxIdleConnsPerHost:   100,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		DisableKeepAlives:     false,
-		DisableCompression:    false,
-		ForceAttemptHTTP2:     true,
+		Proxy:               http.ProxyFromEnvironment,
+		DialContext:         dialer.DialContext,
+		MaxIdleConns:        100,
+		MaxIdleConnsPerHost: 100,
+		IdleConnTimeout:     90 * time.Second,
+		TLSHandshakeTimeout: 10 * time.Second,
+		DisableKeepAlives:   false,
+		DisableCompression:  false,
+		ForceAttemptHTTP2:   true,
 	}
 
 	if tlsCfg != nil {
@@ -59,18 +59,18 @@ func BuildTransport(tlsCfg *TLSConfig) *http.Transport {
 // DefaultTransport returns a transport tuned for stress testing.
 func DefaultTransport() *http.Transport {
 	return &http.Transport{
-		Proxy:                 http.ProxyFromEnvironment,
+		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 30 * time.Second,
 		}).DialContext,
-		MaxIdleConns:          1000,
-		MaxIdleConnsPerHost:   500,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		DisableKeepAlives:     false,
-		DisableCompression:    false,
-		ForceAttemptHTTP2:     true,
+		MaxIdleConns:        1000,
+		MaxIdleConnsPerHost: 500,
+		IdleConnTimeout:     90 * time.Second,
+		TLSHandshakeTimeout: 10 * time.Second,
+		DisableKeepAlives:   false,
+		DisableCompression:  false,
+		ForceAttemptHTTP2:   true,
 	}
 }
 

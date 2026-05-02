@@ -13,11 +13,11 @@ import (
 
 // EvalResult holds the result of a single assertion evaluation.
 type EvalResult struct {
-	Name  string `json:"name"`
-	Pass  bool   `json:"pass"`
-	Actual  string `json:"actual"`
+	Name     string `json:"name"`
+	Pass     bool   `json:"pass"`
+	Actual   string `json:"actual"`
 	Expected string `json:"expected"`
-	Error   string `json:"error,omitempty"`
+	Error    string `json:"error,omitempty"`
 }
 
 // Errorf creates a failed EvalResult with an error message.

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/desyang-hub/stress-test-utils/internal/assertions"
-	"github.com/desyang-hub/stress-test-utils/internal/config"
 	"github.com/desyang-hub/stress-test-utils/internal/concurrency"
+	"github.com/desyang-hub/stress-test-utils/internal/config"
 	stresstesthttp "github.com/desyang-hub/stress-test-utils/internal/http"
 	"github.com/desyang-hub/stress-test-utils/internal/metrics"
 )
@@ -34,7 +34,7 @@ func NewWorker(id int, engine *Engine, pool *RequestPool, limiter *concurrency.T
 	}
 }
 
-// Run is the worker's main loop. It exits when the context is cancelled.
+// Run is the worker's main loop. It exits when the context is canceled.
 func (w *Worker) Run(ctx context.Context) {
 	for {
 		select {
@@ -100,15 +100,15 @@ func (w *Worker) Run(ctx context.Context) {
 
 		// Evaluate assertions
 		result := &metrics.Result{
-			RequestID:    req.ID,
-			Method:       req.Method,
-			URL:          req.URL,
-			StatusCode:   resp.StatusCode,
-			Status:       http.StatusText(resp.StatusCode),
-			Latency:      latency,
-			Timestamp:    start,
-			Stage:        int(w.stageIdx),
-			WorkerID:     w.ID,
+			RequestID:  req.ID,
+			Method:     req.Method,
+			URL:        req.URL,
+			StatusCode: resp.StatusCode,
+			Status:     http.StatusText(resp.StatusCode),
+			Latency:    latency,
+			Timestamp:  start,
+			Stage:      int(w.stageIdx),
+			WorkerID:   w.ID,
 		}
 
 		if len(req.Assertions) > 0 {

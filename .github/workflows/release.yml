@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.25"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Compute version
+        id: version
+        run: |
+          ver="${GITHUB_REF#refs/tags/}"
+          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+
+      - name: Build all platforms
+        env:
+          GOFLAGS: -mod=readonly
+        run: |
+          mkdir -p dist
+          for pair in \
+            "linux/amd64" "linux/arm64" "linux/arm" "linux/386" \
+            "darwin/amd64" "darwin/arm64" \
+            "windows/amd64" "windows/arm64" "windows/386"; do
+            os="${pair%/*}"
+            arch="${pair#*/}"
+            name="stresstest-${{ steps.version.outputs.version }}-${os}-${arch}"
+            [ "$os" = "windows" ] && name+=".exe"
+            GOOS=$os GOARCH=$arch go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=${{ steps.version.outputs.version }}" -o "dist/$name" ./cmd/stresstest/
+          done
+
+      - name: Create checksums
+        run: |
+          cd dist
+          sha256sum stresstest-* | sort -k2 > checksums.txt
+          cat checksums.txt
+
+      - name: Generate release notes
+        run: |
+          cat > release-notes.txt << 'EOF'
+          ## stress-test-utils ${{ steps.version.outputs.version }}
+
+          Enterprise-grade API stress testing tool with multi-stage load patterns, assertion engine, and rich reporting.
+
+          ### Binaries included
+          - Linux: amd64, arm64, arm, 386
+          - macOS: amd64, arm64
+          - Windows: amd64, arm64, 386
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          body_path: release-notes.txt
+          draft: false
+          prerelease: false
+          files: |
+            dist/stresstest-*-linux-amd64.tar.gz
+            dist/stresstest-*-linux-arm64.tar.gz
+            dist/stresstest-*-linux-arm.tar.gz
+            dist/stresstest-*-linux-386.tar.gz
+            dist/stresstest-*-darwin-amd64.tar.gz
+            dist/stresstest-*-darwin-arm64.tar.gz
+            dist/stresstest-*-windows-amd64.zip
+            dist/stresstest-*-windows-arm64.zip
+            dist/stresstest-*-windows-386.zip
+            dist/checksums.txt

@@ -8,21 +8,21 @@ import (
 	"time"
 
 	"github.com/desyang-hub/stress-test-utils/internal/assertions"
-	"github.com/desyang-hub/stress-test-utils/internal/config"
 	"github.com/desyang-hub/stress-test-utils/internal/concurrency"
+	"github.com/desyang-hub/stress-test-utils/internal/config"
 	stresstesthttp "github.com/desyang-hub/stress-test-utils/internal/http"
 	"github.com/desyang-hub/stress-test-utils/internal/metrics"
 )
 
 // Engine orchestrates a multi-stage stress test.
 type Engine struct {
-	cfg           *config.TestConfig
-	defaultReq    *config.DefaultRequest
-	httpClient    *stresstesthttp.Client
-	evaluator     *assertions.Evaluator
-	tracker       *metrics.Tracker
-	coordinator   *Coordinator
-	requestPool   *RequestPool
+	cfg            *config.TestConfig
+	defaultReq     *config.DefaultRequest
+	httpClient     *stresstesthttp.Client
+	evaluator      *assertions.Evaluator
+	tracker        *metrics.Tracker
+	coordinator    *Coordinator
+	requestPool    *RequestPool
 	defaultTimeout time.Duration
 }
 

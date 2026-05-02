@@ -135,7 +135,7 @@ func validateAction(ctx context.Context, c *cli.Command) error {
 func toReporterStats(s metrics.Stats) reporters.Stats {
 	sb := make(map[int]int64, len(s.StatusCodeBreakdown))
 	for k, v := range s.StatusCodeBreakdown {
-		sb[int(k)] = v
+		sb[k] = v
 	}
 	eb := make(map[string]int64, len(s.ErrorBreakdown))
 	for k, v := range s.ErrorBreakdown {

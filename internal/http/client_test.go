@@ -30,7 +30,7 @@ func TestClientDo(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient(
-		WithTimeout(5*time.Second),
+		WithTimeout(5 * time.Second),
 	)
 
 	req, err := http.NewRequest("GET", server.URL, nil)
@@ -62,7 +62,7 @@ func TestClientServerError(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient(
-		WithTimeout(5*time.Second),
+		WithTimeout(5 * time.Second),
 	)
 
 	req, err := http.NewRequest("GET", server.URL, nil)
@@ -71,10 +71,9 @@ func TestClientServerError(t *testing.T) {
 	}
 
 	resp, err := client.Do(req)
-	if err != nil {
-		// Server errors may return an error depending on implementation
-		// The important thing is we get a response
-	}
+	// Server errors may return an error depending on implementation;
+	// the important thing is we get a response.
+	_ = err
 
 	if resp == nil {
 		t.Fatal("expected response even on server error")
@@ -92,7 +91,7 @@ func TestClientTimeout(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient(
-		WithTimeout(100*time.Millisecond),
+		WithTimeout(100 * time.Millisecond),
 	)
 
 	req, err := http.NewRequest("GET", server.URL, nil)

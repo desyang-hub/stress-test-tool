@@ -16,7 +16,7 @@ func TestResolveEnvVars(t *testing.T) {
 	cfg := &TestConfig{
 		Name: "test",
 		DefaultRequest: DefaultRequest{
-			URL:     "${TEST_HOST}/api",
+			URL:       "${TEST_HOST}/api",
 			AuthToken: "$TEST_TOKEN",
 		},
 		Stages: []Stage{
@@ -73,7 +73,7 @@ func TestValidateNoStages(t *testing.T) {
 
 func TestValidateBadMethod(t *testing.T) {
 	cfg := &TestConfig{
-		Name: "test",
+		Name:   "test",
 		Stages: []Stage{{Duration: Duration{Duration: time.Second}, Concurrency: 1}},
 		Requests: []Request{{
 			ID:     "bad",
@@ -95,7 +95,7 @@ func TestValidateBadMethod(t *testing.T) {
 
 func TestValidateMissingRequestID(t *testing.T) {
 	cfg := &TestConfig{
-		Name: "test",
+		Name:   "test",
 		Stages: []Stage{{Duration: Duration{Duration: time.Second}, Concurrency: 1}},
 		Requests: []Request{{
 			URL: "http://example.com",
@@ -115,7 +115,7 @@ func TestValidateMissingRequestID(t *testing.T) {
 
 func TestValidateBadFormat(t *testing.T) {
 	cfg := &TestConfig{
-		Name: "test",
+		Name:   "test",
 		Stages: []Stage{{Duration: Duration{Duration: time.Second}, Concurrency: 1}},
 		Output: OutputConfig{
 			Formats: []string{"console", "invalid_format"},
@@ -173,7 +173,7 @@ requests:
 
 func TestValidateValid(t *testing.T) {
 	cfg := &TestConfig{
-		Name: "valid test",
+		Name:   "valid test",
 		Stages: []Stage{{Duration: Duration{Duration: time.Second}, Concurrency: 1}},
 		Output: OutputConfig{Formats: []string{"console"}},
 	}

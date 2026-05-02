@@ -56,7 +56,7 @@ func CalcStandardDeviation(data []float64, mean float64) float64 {
 // Buckets: <10ms, <25ms, <50ms, <100ms, <250ms, <500ms, <1s, <2.5s, <5s, <10s, >=10s.
 func CalcHistogram(latencies []float64) map[string]int64 {
 	type bucket struct {
-		label    string
+		label     string
 		threshold float64
 	}
 

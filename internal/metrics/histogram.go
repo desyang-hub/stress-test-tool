@@ -10,11 +10,11 @@ var DefaultBuckets = []float64{10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 1000
 
 // Histogram represents a latency histogram with bucket counts.
 type Histogram struct {
-	Buckets  []float64   // bucket boundaries in ms
-	Labels   []string    // display labels
-	Counts   []int64     // count per bucket
-	Boundary float64     // last boundary (for overflow)
-	Overflow int64       // count beyond last boundary
+	Buckets  []float64 // bucket boundaries in ms
+	Labels   []string  // display labels
+	Counts   []int64   // count per bucket
+	Boundary float64   // last boundary (for overflow)
+	Overflow int64     // count beyond last boundary
 }
 
 // BuildHistogram creates a histogram from a []float64 latency slice (in ms).

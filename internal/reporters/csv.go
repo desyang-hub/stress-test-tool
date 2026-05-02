@@ -36,10 +36,12 @@ func (r *CSVReporter) Write(results []CSVRow) error {
 	defer w.Flush()
 
 	// Header
-	w.Write([]string{"timestamp", "request_id", "method", "url", "status_code", "latency_ms", "response_size", "error"})
+	if err := w.Write([]string{"timestamp", "request_id", "method", "url", "status_code", "latency_ms", "response_size", "error"}); err != nil {
+		return err
+	}
 
 	for _, row := range results {
-		w.Write([]string{
+		if err := w.Write([]string{
 			row.Timestamp.Format(time.RFC3339),
 			row.RequestID,
 			row.Method,
@@ -48,7 +50,9 @@ func (r *CSVReporter) Write(results []CSVRow) error {
 			row.LatencyMS,
 			row.ResponseSize,
 			row.Error,
-		})
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil

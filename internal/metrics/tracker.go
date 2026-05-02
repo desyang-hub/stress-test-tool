@@ -40,24 +40,24 @@ type Result struct {
 
 // Stats holds aggregated statistics across all completed requests.
 type Stats struct {
-	TotalRequests         int64             `json:"total_requests"`
-	Successful            int64             `json:"successful"`
-	Failed                int64             `json:"failed"`
-	TotalBytes            int64             `json:"total_bytes_received"`
-	TotalDuration         time.Duration     `json:"total_duration"`
-	TPS                   float64           `json:"tps"`
-	QPS                   float64           `json:"qps"`
-	LatencyMin            float64           `json:"min_ms"`
-	LatencyMax            float64           `json:"max_ms"`
-	LatencyMean           float64           `json:"mean_ms"`
-	LatencyMedian         float64           `json:"p50_ms"`
-	LatencyP90            float64           `json:"p90_ms"`
-	LatencyP95            float64           `json:"p95_ms"`
-	LatencyP99            float64           `json:"p99_ms"`
-	LatencyStdDev         float64           `json:"stddev_ms"`
-	ErrorBreakdown        map[ErrorType]int64 `json:"error_breakdown"`
-	StatusCodeBreakdown   map[int]int64     `json:"status_code_breakdown"`
-	Histogram             map[string]int64  `json:"histogram"`
+	TotalRequests       int64               `json:"total_requests"`
+	Successful          int64               `json:"successful"`
+	Failed              int64               `json:"failed"`
+	TotalBytes          int64               `json:"total_bytes_received"`
+	TotalDuration       time.Duration       `json:"total_duration"`
+	TPS                 float64             `json:"tps"`
+	QPS                 float64             `json:"qps"`
+	LatencyMin          float64             `json:"min_ms"`
+	LatencyMax          float64             `json:"max_ms"`
+	LatencyMean         float64             `json:"mean_ms"`
+	LatencyMedian       float64             `json:"p50_ms"`
+	LatencyP90          float64             `json:"p90_ms"`
+	LatencyP95          float64             `json:"p95_ms"`
+	LatencyP99          float64             `json:"p99_ms"`
+	LatencyStdDev       float64             `json:"stddev_ms"`
+	ErrorBreakdown      map[ErrorType]int64 `json:"error_breakdown"`
+	StatusCodeBreakdown map[int]int64       `json:"status_code_breakdown"`
+	Histogram           map[string]int64    `json:"histogram"`
 }
 
 // LiveStats provides real-time statistics for the progress bar and live console.
@@ -74,7 +74,7 @@ type LiveStats struct {
 // Uses atomic.Int64 for safe concurrent access on all platforms including 32-bit.
 type Tracker struct {
 	mu             sync.RWMutex
-	latencies      []float64           // in milliseconds, unsorted (sorted during Snapshot)
+	latencies      []float64 // in milliseconds, unsorted (sorted during Snapshot)
 	errorBreakdown map[ErrorType]int64
 	statusCodeDist map[int]int64
 	totalBytes     atomic.Int64
@@ -164,21 +164,21 @@ func (t *Tracker) Snapshot() Stats {
 	}
 
 	stats := Stats{
-		TotalRequests:         total,
-		Successful:            success,
-		Failed:                failure,
-		TotalBytes:            t.totalBytes.Load(),
-		TotalDuration:         time.Duration(totalDuration),
-		LatencyMin:            minOrZero(latCopy),
-		LatencyMax:            maxOrZero(latCopy),
-		LatencyMean:           mean,
-		LatencyMedian:         p[50],
-		LatencyP90:            p[90],
-		LatencyP95:            p[95],
-		LatencyP99:            p[99],
-		ErrorBreakdown:        make(map[ErrorType]int64),
-		StatusCodeBreakdown:   make(map[int]int64),
-		Histogram:             CalcHistogram(latCopy),
+		TotalRequests:       total,
+		Successful:          success,
+		Failed:              failure,
+		TotalBytes:          t.totalBytes.Load(),
+		TotalDuration:       time.Duration(totalDuration),
+		LatencyMin:          minOrZero(latCopy),
+		LatencyMax:          maxOrZero(latCopy),
+		LatencyMean:         mean,
+		LatencyMedian:       p[50],
+		LatencyP90:          p[90],
+		LatencyP95:          p[95],
+		LatencyP99:          p[99],
+		ErrorBreakdown:      make(map[ErrorType]int64),
+		StatusCodeBreakdown: make(map[int]int64),
+		Histogram:           CalcHistogram(latCopy),
 	}
 
 	for k, v := range t.errorBreakdown {

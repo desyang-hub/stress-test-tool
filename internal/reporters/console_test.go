@@ -3,34 +3,34 @@ package reporters
 import (
 	"bytes"
 	"strings"
-	"unicode/utf8"
 	"testing"
 	"time"
+	"unicode/utf8"
 )
 
 func TestPrintSummary(t *testing.T) {
 	s := Stats{
-		Name:            "test-load",
-		TotalRequests:   1000,
-		Successful:      950,
-		Failed:          50,
-		TPS:             100.5,
-		TotalDuration:   10 * time.Second,
-		LatencyMin:      1.0,
-		LatencyMean:     25.5,
-		LatencyMedian:   20.0,
-		LatencyP90:      50.0,
-		LatencyP95:      75.0,
-		LatencyP99:      120.0,
-		LatencyMax:      500.0,
-		LatencyStdDev:   30.0,
+		Name:                "test-load",
+		TotalRequests:       1000,
+		Successful:          950,
+		Failed:              50,
+		TPS:                 100.5,
+		TotalDuration:       10 * time.Second,
+		LatencyMin:          1.0,
+		LatencyMean:         25.5,
+		LatencyMedian:       20.0,
+		LatencyP90:          50.0,
+		LatencyP95:          75.0,
+		LatencyP99:          120.0,
+		LatencyMax:          500.0,
+		LatencyStdDev:       30.0,
 		StatusCodeBreakdown: map[int]int64{200: 900, 500: 50},
-		ErrorBreakdown:    map[string]int64{"timeout": 30, "connection": 20},
+		ErrorBreakdown:      map[string]int64{"timeout": 30, "connection": 20},
 		Histogram: map[string]int64{
-			"0-10ms":  200,
-			"10-50ms": 500,
+			"0-10ms":   200,
+			"10-50ms":  500,
 			"50-100ms": 200,
-			">100ms":  100,
+			">100ms":   100,
 		},
 	}
 

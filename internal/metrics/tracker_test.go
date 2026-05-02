@@ -37,9 +37,9 @@ func TestTrackerRecord(t *testing.T) {
 func TestTrackerRecordError(t *testing.T) {
 	tracker := NewTracker()
 	tracker.Record(&Result{
-		RequestID: "req-err",
-		Method:    "GET",
-		URL:       "http://example.com/broken",
+		RequestID:  "req-err",
+		Method:     "GET",
+		URL:        "http://example.com/broken",
 		StatusCode: 0,
 		Latency:    5000 * time.Millisecond,
 		Error:      "connection refused",
@@ -59,13 +59,13 @@ func TestTrackerRecordError(t *testing.T) {
 func TestTrackerRecordAssertionFail(t *testing.T) {
 	tracker := NewTracker()
 	tracker.Record(&Result{
-		RequestID:   "req-assert",
-		Method:      "GET",
-		URL:         "http://example.com/api",
-		StatusCode:  200,
-		Latency:     100 * time.Millisecond,
+		RequestID:     "req-assert",
+		Method:        "GET",
+		URL:           "http://example.com/api",
+		StatusCode:    200,
+		Latency:       100 * time.Millisecond,
 		AssertionFail: []string{"status mismatch"},
-		Stage:       0,
+		Stage:         0,
 	})
 
 	stats := tracker.Snapshot()
@@ -131,10 +131,10 @@ func TestTrackerSnapshot(t *testing.T) {
 func TestTrackerReset(t *testing.T) {
 	tracker := NewTracker()
 	tracker.Record(&Result{
-		RequestID: "req-1",
+		RequestID:  "req-1",
 		StatusCode: 200,
-		Latency:   50 * time.Millisecond,
-		Stage:     0,
+		Latency:    50 * time.Millisecond,
+		Stage:      0,
 	})
 	tracker.Reset()
 
@@ -147,10 +147,10 @@ func TestTrackerReset(t *testing.T) {
 func TestTrackerLiveSnapshot(t *testing.T) {
 	tracker := NewTracker()
 	tracker.Record(&Result{
-		RequestID: "req-1",
+		RequestID:  "req-1",
 		StatusCode: 200,
-		Latency:   50 * time.Millisecond,
-		Stage:     0,
+		Latency:    50 * time.Millisecond,
+		Stage:      0,
 	})
 
 	ls := tracker.LiveSnapshot()

@@ -4,17 +4,17 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"syscall"
 	"sync/atomic"
+	"syscall"
 )
 
 // Coordinator manages graceful shutdown of the test engine.
 type Coordinator struct {
-	ctx            context.Context
-	cancel         context.CancelFunc
-	shutdownCh     chan struct{}
-	sigCh          chan os.Signal
-	softShutdown   int32 // atomic: 1 = shutdown requested
+	ctx          context.Context
+	cancel       context.CancelFunc
+	shutdownCh   chan struct{}
+	sigCh        chan os.Signal
+	softShutdown int32 // atomic: 1 = shutdown requested
 }
 
 // NewCoordinator creates a new Coordinator.
