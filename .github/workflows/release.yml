@@ -33,17 +33,14 @@ jobs:
           VER="${{ steps.version.outputs.version }}"
           mkdir -p dist
 
-          # Linux
           GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-amd64" ./cmd/stresstest/
           GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-arm64" ./cmd/stresstest/
           GOOS=linux GOARCH=arm go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-arm" ./cmd/stresstest/
           GOOS=linux GOARCH=386 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-386" ./cmd/stresstest/
 
-          # macOS
           GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-darwin-amd64" ./cmd/stresstest/
           GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-darwin-arm64" ./cmd/stresstest/
 
-          # Windows
           GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-amd64.exe" ./cmd/stresstest/
           GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-arm64.exe" ./cmd/stresstest/
           GOOS=windows GOARCH=386 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-386.exe" ./cmd/stresstest/
@@ -90,21 +87,18 @@ jobs:
           EOF
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
-          body_path: release-notes.txt
-          draft: false
-          prerelease: false
-          files: |
-            dist/checksums.txt
-            dist/stresstest-*-linux-amd64.tar.gz
-            dist/stresstest-*-linux-arm64.tar.gz
-            dist/stresstest-*-linux-arm.tar.gz
-            dist/stresstest-*-linux-386.tar.gz
-            dist/stresstest-*-darwin-amd64.tar.gz
-            dist/stresstest-*-darwin-arm64.tar.gz
-            dist/stresstest-*-windows-amd64.exe.zip
-            dist/stresstest-*-windows-arm64.exe.zip
+        run: |
+          ver="${{ steps.version.outputs.version }}"
+          gh release create "$ver" --target main --title "$ver" --notes-file release-notes.txt --clobber -- \
+            dist/checksums.txt \
+            dist/stresstest-*-linux-amd64.tar.gz \
+            dist/stresstest-*-linux-arm64.tar.gz \
+            dist/stresstest-*-linux-arm.tar.gz \
+            dist/stresstest-*-linux-386.tar.gz \
+            dist/stresstest-*-darwin-amd64.tar.gz \
+            dist/stresstest-*-darwin-arm64.tar.gz \
+            dist/stresstest-*-windows-amd64.exe.zip \
+            dist/stresstest-*-windows-arm64.exe.zip \
             dist/stresstest-*-windows-386.exe.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
