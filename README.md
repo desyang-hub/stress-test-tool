@@ -18,7 +18,7 @@ High-performance API stress testing tool for Go.
 
 ### Depends
 - Go v1.24
-- golangci-lint v1.64.8
+- golangci-lint
 
 
 ### From source
