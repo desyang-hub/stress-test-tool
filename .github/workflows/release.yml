@@ -44,10 +44,26 @@ jobs:
             GOOS=$os GOARCH=$arch go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=${{ steps.version.outputs.version }}" -o "dist/$name" ./cmd/stresstest/
           done
 
+      - name: Install zip
+        run: sudo apt-get update && sudo apt-get install -y zip
+
+      - name: Create archives
+        run: |
+          cd dist
+          for f in stresstest-*.exe; do
+            [ -f "$f" ] && zip "${f}.zip" "$f"
+          done
+          for f in stresstest-linux-* stresstest-darwin-*; do
+            [ -f "$f" ] && tar -czf "${f}.tar.gz" "$f"
+          done
+          ls -la
+
       - name: Create checksums
         run: |
           cd dist
-          sha256sum stresstest-* | sort -k2 > checksums.txt
+          ls stresstest-linux-* stresstest-darwin-* stresstest-windows-* > binary-list.txt
+          xargs sha256sum < binary-list.txt | sort -k2 > checksums.txt
+          rm binary-list.txt
           cat checksums.txt
 
       - name: Generate release notes
