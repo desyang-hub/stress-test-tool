@@ -1,0 +1,21 @@
+name: basic-api-test
+description: "Basic API stress test with default settings"
+
+default_request:
+  method: GET
+  url: http://localhost:8080/api/health
+  headers:
+    Accept: application/json
+  timeout: 10s
+
+stages:
+  - name: baseline
+    concurrency: 50
+    duration: 30s
+
+output:
+  directory: ./reports
+  formats:
+    - console
+    - html
+    - json

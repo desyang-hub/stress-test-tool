@@ -1,0 +1,40 @@
+name: gradient-load-test
+description: "Multi-stage gradient load test"
+
+default_request:
+  method: POST
+  url: http://localhost:8080/api/submit
+  headers:
+    Content-Type: application/json
+    Authorization: Bearer ${API_TOKEN}
+  body: '{"data":"test"}'
+  timeout: 5s
+
+stages:
+  - name: warmup
+    concurrency: 10
+    rate_limit: 20
+    duration: 10s
+
+  - name: ramp-up
+    concurrency: 50
+    rate_limit: 100
+    duration: 30s
+
+  - name: peak
+    concurrency: 200
+    rate_limit: 500
+    duration: 60s
+
+  - name: cooldown
+    concurrency: 50
+    rate_limit: 100
+    duration: 15s
+
+output:
+  directory: ./reports
+  formats:
+    - console
+    - html
+    - json
+    - csv

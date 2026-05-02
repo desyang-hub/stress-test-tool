@@ -1,0 +1,21 @@
+# Binaries
+stresstest
+stresstest.exe
+*.exe
+
+# Reports
+reports/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Test output
+coverage.out
+test.out
+
+# Go build
+*_test
+dist/

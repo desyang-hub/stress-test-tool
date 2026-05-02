@@ -1,0 +1,74 @@
+name: enterprise-api-test
+description: "Enterprise-grade test with assertions and TLS"
+
+default_request:
+  method: GET
+  url: https://api.example.com/v1/status
+  headers:
+    Accept: application/json
+    X-API-Key: ${API_KEY}
+  timeout: 15s
+  retries: 2
+  retry_delay: 1s
+  cookie_jar: true
+
+tls:
+  insecure_skip_verify: false
+  min_version: "1.2"
+
+requests:
+  - id: health-check
+    method: GET
+    url: https://api.example.com/v1/health
+    assertions:
+      - name: status_ok
+        type: status
+        target: status
+        operator: equal
+        value: "200"
+      - name: fast_response
+        type: latency
+        target: latency
+        operator: less_than
+        value: "100"
+
+  - id: data-query
+    method: POST
+    url: https://api.example.com/v1/query
+    headers:
+      Content-Type: application/json
+    body: '{"page":1,"limit":100}'
+    assertions:
+      - name: status_created
+        type: status
+        target: status
+        operator: equal
+        value: "200"
+      - name: has_data
+        type: json
+        target: data
+        operator: exists
+      - name: response_size
+        type: body
+        target: body
+        operator: length
+        value: "50"
+
+stages:
+  - name: stability
+    concurrency: 20
+    rate_limit: 50
+    duration: 5m
+
+  - name: endurance
+    concurrency: 100
+    rate_limit: 200
+    duration: 10m
+
+timeout: 30m
+
+output:
+  directory: ./reports
+  formats:
+    - html
+    - json
