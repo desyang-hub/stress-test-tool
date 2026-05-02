@@ -21,16 +21,15 @@ jobs:
 
       - name: Compute version
         id: version
-        run: |
-          ver="${GITHUB_REF#refs/tags/}"
-          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+        run: echo "ver=$(echo $GITHUB_REF | sed 's|refs/tags/||')" >> "$GITHUB_OUTPUT"
 
       - name: Build all platforms
         env:
           GOFLAGS: -mod=readonly
         run: |
           set -e
-          VER="${{ steps.version.outputs.version }}"
+          VER="${{ steps.version.outputs.ver }}"
+          echo "Building version: $VER"
           mkdir -p dist
 
           GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-amd64" ./cmd/stresstest/
@@ -51,18 +50,20 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y zip
 
       - name: Create archives
+        env:
+          VER: ${{ steps.version.outputs.ver }}
         run: |
           set -e
           cd dist
-          zip stresstest-*-windows-amd64.exe.zip stresstest-*-windows-amd64.exe
-          zip stresstest-*-windows-arm64.exe.zip stresstest-*-windows-arm64.exe
-          zip stresstest-*-windows-386.exe.zip stresstest-*-windows-386.exe
-          tar -czf stresstest-*-linux-amd64.tar.gz stresstest-*-linux-amd64
-          tar -czf stresstest-*-linux-arm64.tar.gz stresstest-*-linux-arm64
-          tar -czf stresstest-*-linux-arm.tar.gz stresstest-*-linux-arm
-          tar -czf stresstest-*-linux-386.tar.gz stresstest-*-linux-386
-          tar -czf stresstest-*-darwin-amd64.tar.gz stresstest-*-darwin-amd64
-          tar -czf stresstest-*-darwin-arm64.tar.gz stresstest-*-darwin-arm64
+          zip stresstest-$VER-windows-amd64.exe.zip stresstest-$VER-windows-amd64.exe
+          zip stresstest-$VER-windows-arm64.exe.zip stresstest-$VER-windows-arm64.exe
+          zip stresstest-$VER-windows-386.exe.zip stresstest-$VER-windows-386.exe
+          tar -czf stresstest-$VER-linux-amd64.tar.gz stresstest-$VER-linux-amd64
+          tar -czf stresstest-$VER-linux-arm64.tar.gz stresstest-$VER-linux-arm64
+          tar -czf stresstest-$VER-linux-arm.tar.gz stresstest-$VER-linux-arm
+          tar -czf stresstest-$VER-linux-386.tar.gz stresstest-$VER-linux-386
+          tar -czf stresstest-$VER-darwin-amd64.tar.gz stresstest-$VER-darwin-amd64
+          tar -czf stresstest-$VER-darwin-arm64.tar.gz stresstest-$VER-darwin-arm64
           ls -la
 
       - name: Create checksums
@@ -73,10 +74,11 @@ jobs:
           cat checksums.txt
 
       - name: Generate release notes
+        env:
+          VER: ${{ steps.version.outputs.ver }}
         run: |
-          ver="${{ steps.version.outputs.version }}"
           cat > release-notes.txt << EOF
-          ## stress-test-utils ${ver}
+          ## stress-test-utils $VER
 
           Enterprise-grade API stress testing tool with multi-stage load patterns, assertion engine, and rich reporting.
 
@@ -87,20 +89,21 @@ jobs:
           EOF
 
       - name: Create GitHub Release
-        run: |
-          ver="${{ steps.version.outputs.version }}"
-          # Delete existing release if it exists (idempotent)
-          gh release delete "$ver" --yes --cleanup-tag 2>/dev/null || true
-          gh release create "$ver" --target main --title "$ver" --notes-file release-notes.txt -- \
-            dist/checksums.txt \
-            dist/stresstest-*-linux-amd64.tar.gz \
-            dist/stresstest-*-linux-arm64.tar.gz \
-            dist/stresstest-*-linux-arm.tar.gz \
-            dist/stresstest-*-linux-386.tar.gz \
-            dist/stresstest-*-darwin-amd64.tar.gz \
-            dist/stresstest-*-darwin-arm64.tar.gz \
-            dist/stresstest-*-windows-amd64.exe.zip \
-            dist/stresstest-*-windows-arm64.exe.zip \
-            dist/stresstest-*-windows-386.exe.zip
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VER=$(echo $GITHUB_REF | sed 's|refs/tags/||')
+          gh release delete "$VER" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$VER" --target main --title "$VER" --notes-file release-notes.txt
+          gh release upload "$VER" --clobber \
+            dist/checksums.txt \
+            dist/stresstest-$VER-linux-amd64.tar.gz \
+            dist/stresstest-$VER-linux-arm64.tar.gz \
+            dist/stresstest-$VER-linux-arm.tar.gz \
+            dist/stresstest-$VER-linux-386.tar.gz \
+            dist/stresstest-$VER-darwin-amd64.tar.gz \
+            dist/stresstest-$VER-darwin-arm64.tar.gz \
+            dist/stresstest-$VER-windows-amd64.exe.zip \
+            dist/stresstest-$VER-windows-arm64.exe.zip \
+            dist/stresstest-$VER-windows-386.exe.zip
