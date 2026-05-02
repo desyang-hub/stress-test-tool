@@ -89,7 +89,9 @@ jobs:
       - name: Create GitHub Release
         run: |
           ver="${{ steps.version.outputs.version }}"
-          gh release create "$ver" --target main --title "$ver" --notes-file release-notes.txt --clobber -- \
+          # Delete existing release if it exists (idempotent)
+          gh release delete "$ver" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$ver" --target main --title "$ver" --notes-file release-notes.txt -- \
             dist/checksums.txt \
             dist/stresstest-*-linux-amd64.tar.gz \
             dist/stresstest-*-linux-arm64.tar.gz \
