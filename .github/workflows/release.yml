@@ -29,41 +29,55 @@ jobs:
         env:
           GOFLAGS: -mod=readonly
         run: |
+          set -e
+          VER="${{ steps.version.outputs.version }}"
           mkdir -p dist
-          for pair in \
-            "linux/amd64" "linux/arm64" "linux/arm" "linux/386" \
-            "darwin/amd64" "darwin/arm64" \
-            "windows/amd64" "windows/arm64" "windows/386"; do
-            os="${pair%/*}"
-            arch="${pair#*/}"
-            name="stresstest-${{ steps.version.outputs.version }}-${os}-${arch}"
-            [ "$os" = "windows" ] && name+=".exe"
-            GOOS=$os GOARCH=$arch go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=${{ steps.version.outputs.version }}" -o "dist/$name" ./cmd/stresstest/
-          done
+
+          # Linux
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-amd64" ./cmd/stresstest/
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-arm64" ./cmd/stresstest/
+          GOOS=linux GOARCH=arm go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-arm" ./cmd/stresstest/
+          GOOS=linux GOARCH=386 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-linux-386" ./cmd/stresstest/
+
+          # macOS
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-darwin-amd64" ./cmd/stresstest/
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-darwin-arm64" ./cmd/stresstest/
+
+          # Windows
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-amd64.exe" ./cmd/stresstest/
+          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-arm64.exe" ./cmd/stresstest/
+          GOOS=windows GOARCH=386 go build -ldflags="-s -w -X github.com/urfave/cli/v3.Version=$VER" -o "dist/stresstest-$VER-windows-386.exe" ./cmd/stresstest/
+
+          ls -la dist/
 
       - name: Install zip
         run: sudo apt-get update && sudo apt-get install -y zip
 
       - name: Create archives
         run: |
+          set -e
           cd dist
-          for f in stresstest-*.exe; do
-            [ -f "$f" ] && zip "${f}.zip" "$f"
-          done
-          for f in stresstest-linux-* stresstest-darwin-*; do
-            [ -f "$f" ] && tar -czf "${f}.tar.gz" "$f"
-          done
+          zip stresstest-*-windows-amd64.exe.zip stresstest-*-windows-amd64.exe
+          zip stresstest-*-windows-arm64.exe.zip stresstest-*-windows-arm64.exe
+          zip stresstest-*-windows-386.exe.zip stresstest-*-windows-386.exe
+          tar -czf stresstest-*-linux-amd64.tar.gz stresstest-*-linux-amd64
+          tar -czf stresstest-*-linux-arm64.tar.gz stresstest-*-linux-arm64
+          tar -czf stresstest-*-linux-arm.tar.gz stresstest-*-linux-arm
+          tar -czf stresstest-*-linux-386.tar.gz stresstest-*-linux-386
+          tar -czf stresstest-*-darwin-amd64.tar.gz stresstest-*-darwin-amd64
+          tar -czf stresstest-*-darwin-arm64.tar.gz stresstest-*-darwin-arm64
           ls -la
 
       - name: Create checksums
         run: |
+          set -e
           cd dist
-          sha256sum stresstest-*-linux-*.tar.gz stresstest-*-darwin-*.tar.gz stresstest-*-windows-*.exe.zip | sort -k2 > checksums.txt
+          sha256sum stresstest-*.tar.gz stresstest-*.zip | sort -k2 > checksums.txt
           cat checksums.txt
 
       - name: Generate release notes
         run: |
-          ver="${GITHUB_REF#refs/tags/}"
+          ver="${{ steps.version.outputs.version }}"
           cat > release-notes.txt << EOF
           ## stress-test-utils ${ver}
 
@@ -84,6 +98,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
+            dist/checksums.txt
             dist/stresstest-*-linux-amd64.tar.gz
             dist/stresstest-*-linux-arm64.tar.gz
             dist/stresstest-*-linux-arm.tar.gz
@@ -93,4 +108,3 @@ jobs:
             dist/stresstest-*-windows-amd64.exe.zip
             dist/stresstest-*-windows-arm64.exe.zip
             dist/stresstest-*-windows-386.exe.zip
-            dist/checksums.txt
