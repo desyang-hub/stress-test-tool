@@ -12,15 +12,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ["1.23", "1.24", "1.25"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.25"
 
       - name: Compute version
         id: version
@@ -61,15 +58,14 @@ jobs:
       - name: Create checksums
         run: |
           cd dist
-          ls stresstest-linux-* stresstest-darwin-* stresstest-windows-* > binary-list.txt
-          xargs sha256sum < binary-list.txt | sort -k2 > checksums.txt
-          rm binary-list.txt
+          sha256sum stresstest-*-linux-* stresstest-*-darwin-* stresstest-*-windows-* | sort -k2 > checksums.txt
           cat checksums.txt
 
       - name: Generate release notes
         run: |
-          cat > release-notes.txt << 'EOF'
-          ## stress-test-utils ${{ steps.version.outputs.version }}
+          ver="${GITHUB_REF#refs/tags/}"
+          cat > release-notes.txt << EOF
+          ## stress-test-utils ${ver}
 
           Enterprise-grade API stress testing tool with multi-stage load patterns, assertion engine, and rich reporting.
 
